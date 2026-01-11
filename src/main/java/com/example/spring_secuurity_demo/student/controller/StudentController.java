@@ -28,6 +28,10 @@ public class StudentController {
             new Student(13, "Thanos")
     );
 
+    @GetMapping
+    public List<Student> getAllStudents()   {
+        return students;
+    }
 
     @GetMapping("/{studentId}")
     public Student getStudent(
