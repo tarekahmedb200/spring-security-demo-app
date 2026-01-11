@@ -16,6 +16,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static com.example.spring_secuurity_demo.student.models.ApplicationUserRole.*;
+import static com.example.spring_secuurity_demo.student.models.ApplicationUserPermission.*;
 
 @Configuration
 public class SecurityConfig {
@@ -28,7 +29,6 @@ public class SecurityConfig {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -36,7 +36,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Only GET /students is public
                         .requestMatchers("/api/**").hasRole(STUDENT.name())
-                        .requestMatchers("/api/**").hasRole(STUDENT.name())
+                        .requestMatchers(HttpMethod.DELETE,"/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+                        .requestMatchers(HttpMethod.POST,"/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+                        .requestMatchers(HttpMethod.PUT,"/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+                        .requestMatchers(HttpMethod.GET,"/management/api/**").hasAnyRole(ADMIN.name(),ADMINTRAINEE.name())
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )
@@ -51,19 +54,19 @@ public class SecurityConfig {
         UserDetails anna = User.builder()
                 .username("anna")
                 .password(passwordEncoder.encode("anna"))
-                .roles(STUDENT.name())
+                .authorities(STUDENT.getGrantedAuthorities())
                 .build();
 
         UserDetails angel = User.builder()
                 .username("angel")
                 .password(passwordEncoder.encode("angel"))
-                .roles(ADMIN.name())
+                .authorities(ADMIN.getGrantedAuthorities())
                 .build();
 
         UserDetails tom = User.builder()
                 .username("tom")
                 .password(passwordEncoder.encode("tom"))
-                .roles(ADMINTRAINEE.name())
+                .authorities(ADMINTRAINEE.getGrantedAuthorities())
                 .build();
 
         return new InMemoryUserDetailsManager(

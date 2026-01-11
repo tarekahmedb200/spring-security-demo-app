@@ -1,5 +1,9 @@
 package com.example.spring_secuurity_demo.student.models;
 
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Set;
+
 public enum ApplicationUserPermission {
     STUDENT_READ("student:read"),
     STUDENT_WRITE("student:write"),
@@ -15,5 +19,6 @@ public enum ApplicationUserPermission {
     public String getPermission() {
         return permission;
     }
+
 }
 
